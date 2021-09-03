@@ -16,5 +16,7 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/JuliaOptimalTransport/ExactOptimalTransport.jl", push_preview=true
+    repo="github.com/JuliaOptimalTransport/ExactOptimalTransport.jl",
+    push_preview=true,
+    devbranch = "main",
 )
