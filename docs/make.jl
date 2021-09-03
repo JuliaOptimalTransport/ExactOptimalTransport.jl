@@ -18,5 +18,5 @@ makedocs(;
 deploydocs(;
     repo="github.com/JuliaOptimalTransport/ExactOptimalTransport.jl",
     push_preview=true,
-    devbranch = "main",
+    devbranch="main",
 )
