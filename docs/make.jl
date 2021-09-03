@@ -10,11 +10,11 @@ makedocs(;
         canonical="https://juliaoptimaltransport.github.io/ExactOptimalTransport.jl",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages=["Home" => "index.md"],
     strict=true,
     checkdocs=:exports,
 )
 
-deploydocs(; repo="github.com/JuliaOptimalTransport/ExactOptimalTransport.jl", push_preview=true)
+deploydocs(;
+    repo="github.com/JuliaOptimalTransport/ExactOptimalTransport.jl", push_preview=true
+)
