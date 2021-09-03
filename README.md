@@ -17,6 +17,7 @@ unregularized optimal transport (Kantorovich) problems.
 ```julia
 using ExactOptimalTransport
 using Distances
+using Tulip
 
 # uniform histograms
 μ = fill(1/250, 250)
@@ -25,8 +26,12 @@ using Distances
 # random cost matrix
 C = pairwise(SqEuclidean(), rand(1, 250), rand(1, 200); dims=2)
 
-# solve unregularized optimal transport problem
-emd(μ, ν, C, ε)
+# compute optimal transport map with Tulip
+lp = Tulip.Optimizer()
+P = emd(μ, ν, C, lp)
+
+# compute optimal transport cost without recomputing the plan
+emd2(μ, ν, C, lp; plan=P)
 ```
 
 Please see the documentation pages for further information.
