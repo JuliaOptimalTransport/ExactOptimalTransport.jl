@@ -1,7 +1,7 @@
 # Code from @devmotion
 # https://github.com/devmotion/\
 # CalibrationErrorsDistributions.jl/blob/main/src/distances/bures.jl
-using OptimalTransport
+using ExactOptimalTransport
 
 using LinearAlgebra
 using Random
@@ -22,6 +22,6 @@ using PDMats
     for (x, y) in Iterators.product(rand_matrices(10), rand_matrices(10))
         xfull = Matrix(x)
         yfull = Matrix(y)
-        @test OptimalTransport.sqbures(x, y) ≈ _sqbures(xfull, yfull)
+        @test ExactOptimalTransport.sqbures(x, y) ≈ _sqbures(xfull, yfull)
     end
 end

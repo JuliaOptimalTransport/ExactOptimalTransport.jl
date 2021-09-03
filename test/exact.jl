@@ -1,4 +1,4 @@
-using OptimalTransport
+using ExactOptimalTransport
 
 using Distances
 using PythonOT: PythonOT

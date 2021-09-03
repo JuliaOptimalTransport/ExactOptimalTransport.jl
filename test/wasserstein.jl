@@ -1,4 +1,4 @@
-using OptimalTransport
+using ExactOptimalTransport
 
 using Distances
 using Distributions
@@ -11,18 +11,18 @@ Random.seed!(100)
 @testset "wasserstein.jl" begin
     @testset "p2distance" begin
         for metric in (Euclidean(), Euclidean(0.01), TotalVariation())
-            @test OptimalTransport.p2distance(metric, Val(1)) === metric
+            @test ExactOptimalTransport.p2distance(metric, Val(1)) === metric
         end
 
-        @test OptimalTransport.p2distance(Euclidean(), Val(2)) == SqEuclidean()
-        @test OptimalTransport.p2distance(Euclidean(0.01), Val(2)) == SqEuclidean(0.01)
+        @test ExactOptimalTransport.p2distance(Euclidean(), Val(2)) == SqEuclidean()
+        @test ExactOptimalTransport.p2distance(Euclidean(0.01), Val(2)) == SqEuclidean(0.01)
 
         p = randexp()
         x = randn(10)
         y = randn(10)
         for metric in (Euclidean(), TotalVariation())
             for _p in (p, Val(p))
-                pmetric = OptimalTransport.p2distance(metric, _p)
+                pmetric = ExactOptimalTransport.p2distance(metric, _p)
                 @test pmetric(x, y) ≈ metric(x, y)^p
             end
         end
@@ -31,8 +31,8 @@ Random.seed!(100)
     @testset "prt" begin
         x = randexp()
         for p in (1, 2, 3, randexp())
-            @test OptimalTransport.prt(x, p) ≈ x^(1 / p)
-            @test OptimalTransport.prt(x, Val(p)) ≈ x^(1 / p)
+            @test ExactOptimalTransport.prt(x, p) ≈ x^(1 / p)
+            @test ExactOptimalTransport.prt(x, Val(p)) ≈ x^(1 / p)
         end
     end
 
