@@ -1,62 +1,30 @@
-# OptimalTransport.jl Documentation
+# ExactOptimalTransport.jl
 
-
-## Exact optimal transport (Kantorovich) problem
+ExactOptimalTransport.jl is a Julia package for solving the unregularized
+optimal transport (Kantorovich) problems.
 
 ```@docs
 emd
 emd2
+```
+
+```@docs
 ot_plan
-ot_plan(::Any, ::OptimalTransport.ContinuousUnivariateDistribution, ::OptimalTransport.UnivariateDistribution)
-ot_plan(::Any, ::OptimalTransport.DiscreteNonParametric, ::OptimalTransport.DiscreteNonParametric)
-ot_plan(::OptimalTransport.SqEuclidean, ::OptimalTransport.Normal, ::OptimalTransport.Normal)
-ot_plan(::OptimalTransport.SqEuclidean, ::OptimalTransport.MvNormal, ::OptimalTransport.MvNormal)
+ot_plan(::Any, ::ExactOptimalTransport.ContinuousUnivariateDistribution, ::ExactOptimalTransport.UnivariateDistribution)
+ot_plan(::Any, ::ExactOptimalTransport.DiscreteNonParametric, ::ExactOptimalTransport.DiscreteNonParametric)
+ot_plan(::ExactOptimalTransport.SqEuclidean, ::ExactOptimalTransport.Normal, ::ExactOptimalTransport.Normal)
+ot_plan(::ExactOptimalTransport.SqEuclidean, ::ExactOptimalTransport.MvNormal, ::ExactOptimalTransport.MvNormal)
+```
+
+```@docs
 ot_cost
-ot_cost(::Any, ::OptimalTransport.ContinuousUnivariateDistribution, ::OptimalTransport.UnivariateDistribution)
-ot_cost(::Any, ::OptimalTransport.DiscreteNonParametric, ::OptimalTransport.DiscreteNonParametric)
-ot_cost(::OptimalTransport.SqEuclidean, ::OptimalTransport.Normal, ::OptimalTransport.Normal)
-ot_cost(::OptimalTransport.SqEuclidean, ::OptimalTransport.MvNormal, ::OptimalTransport.MvNormal)
+ot_cost(::Any, ::ExactOptimalTransport.ContinuousUnivariateDistribution, ::ExactOptimalTransport.UnivariateDistribution)
+ot_cost(::Any, ::ExactOptimalTransport.DiscreteNonParametric, ::ExactOptimalTransport.DiscreteNonParametric)
+ot_cost(::ExactOptimalTransport.SqEuclidean, ::ExactOptimalTransport.Normal, ::ExactOptimalTransport.Normal)
+ot_cost(::ExactOptimalTransport.SqEuclidean, ::ExactOptimalTransport.MvNormal, ::ExactOptimalTransport.MvNormal)
+```
+
+```@docs
 wasserstein
 squared2wasserstein
-```
-
-## Entropically regularised optimal transport
-
-```@docs
-sinkhorn
-sinkhorn2
-sinkhorn_barycenter
-```
-
-Currently the following variants of the Sinkhorn algorithm are supported:
-
-```@docs
-SinkhornGibbs
-SinkhornStabilized
-SinkhornEpsilonScaling
-```
-
-The following methods are deprecated and will be removed:
-
-```@docs
-sinkhorn_stabilized
-sinkhorn_stabilized_epsscaling
-```
-
-## Unbalanced optimal transport
-
-```@docs
-sinkhorn_unbalanced
-sinkhorn_unbalanced2
-```
-
-## Quadratically regularised optimal transport
-
-```@docs
-quadreg
-```
-
-Currently the following algorithms for solving quadratically regularised optimal transport are supported:
-```@docs
-QuadraticOTNewton
 ```
