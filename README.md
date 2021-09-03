@@ -6,7 +6,7 @@
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaOptimalTransport.github.io/ExactOptimalTransport.jl/dev)
 [![CI](https://github.com/JuliaOptimalTransport/ExactOptimalTransport.jl/workflows/CI/badge.svg?branch=main)](https://github.com/JuliaOptimalTransport/ExactOptimalTransport.jl/actions?query=workflow%3ACI+branch%3Amain)
 [![Codecov](https://codecov.io/gh/JuliaOptimalTransport/ExactOptimalTransport.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/JuliaOptimalTransport/ExactOptimalTransport.jl)
-[![Coveralls](https://coveralls.io/repos/github/JuliaOptimalTransport/ExactOptimalTransport.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaOptimalTransport/OptimalTransport.jl?branch=main)
+[![Coveralls](https://coveralls.io/repos/github/JuliaOptimalTransport/ExactOptimalTransport.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaOptimalTransport/ExactOptimalTransport.jl?branch=main)
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 
 This package provides some [Julia](https://julialang.org/) implementations of algorithms for solving
