@@ -41,6 +41,7 @@ Please see the documentation pages for further information.
 - [OptimalTransport.jl](https://github.com/JuliaOptimalTransport/OptimalTransport.jl): Julia implementation of
 algorithms for regularized optimal transport problems with GPU support.
 - [StochasticOptimalTransport.jl](https://github.com/JuliaOptimalTransport/StochasticOptimalTransport.jl): Julia implementation of stochastic optimization algorithms for large-scale optimal transport.
+- [DensityRatioEstimation.jl](https://github.com/JuliaEarth/DensityRatioEstimation.jl): Julia implementation of density ratio estimation.
 - [PythonOT.jl](https://github.com/JuliaOptimalTransport/PythonOT.jl): Julia interface for the [Python Optimal Transport (POT) package](https://pythonot.github.io/).
 
 ## Contributing
