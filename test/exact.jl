@@ -204,13 +204,13 @@ Random.seed!(100)
             c2 = emd2(fill(1 / m, m), fill(1 / n, n), C, Tulip.Optimizer())
             @test c2 ≈ c rtol = 1e-5
 
-            γ = @inferred(ot_cost(euclidean, usupport, vsupport))
+            γ = @inferred(ot_plan(euclidean, usupport, vsupport))
             # used
-            c2 = @inferred(ot_cost(euclidean, usupport, vsupport, uprobs=reverse(uprobs), vprobs=reverse(vprobs); plan=γ))
+            c2 = @inferred(ot_cost(euclidean, usupport, vsupport; plan=γ))
             @test c2 ≈ c
         end
 
-    end
+            end
 
     @testset "Multivariate Gaussians" begin
         @testset "translation with constant covariance" begin
