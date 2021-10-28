@@ -72,8 +72,9 @@ Random.seed!(100)
 
             # compute OT plan
             γ = ot_plan(sqeuclidean, μ, ν)
-            x = randn()
-            @test γ(x) ≈ invlogcdf(ν, logcdf(μ, x))
+            for x in randn(10)
+                @test γ(x) ≈ invlogcdf(ν, logcdf(μ, x))
+            end
 
             # compute OT cost
             c = ot_cost(sqeuclidean, μ, ν)
@@ -90,8 +91,9 @@ Random.seed!(100)
 
             # compute OT plan
             γ = ot_plan(euclidean, μ, ν)
-            x = randn()
-            @test γ(x) ≈ invlogcdf(ν, logcdf(μ, x))
+            for x in randn(10)
+                @test γ(x) ≈ invlogcdf(ν, logcdf(μ, x))
+            end
 
             # compute OT cost, without and with provided plan
             # do not use ν in the second case to ensure that the provided plan is used
