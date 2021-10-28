@@ -72,8 +72,8 @@ Random.seed!(100)
 
             # compute OT plan
             γ = ot_plan(sqeuclidean, μ, ν)
-            x = randn()
-            @test γ(x) ≈ quantile(ν, cdf(μ, x))
+            x = rand(μ,10)
+            γ.(x) ≈ quantile(ν, cdf(μ,x))
 
             # compute OT cost
             c = ot_cost(sqeuclidean, μ, ν)
