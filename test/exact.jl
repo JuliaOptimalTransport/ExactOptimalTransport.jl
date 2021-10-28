@@ -75,7 +75,7 @@ Random.seed!(100)
             for x in randn(10)
                 @test γ(x) ≈ invlogcdf(ν, logcdf(μ, x))
             end
-
+            
             # compute OT cost
             c = ot_cost(sqeuclidean, μ, ν)
             @test c ≈ (mean(μ) - mean(ν))^2 + (std(μ) - std(ν))^2
@@ -134,7 +134,7 @@ Random.seed!(100)
             @test sum(W) ≈ 1
             @test sort(unique(I)) == 1:m
             @test sort(unique(J)) == 1:n
-            # @test sort(I .+ J) == 2:(m + n)
+            @test sort(I .+ J) == 2:(m + n)
 
             # compute OT cost
             c = @inferred(ot_cost(euclidean, μ, ν))
@@ -180,7 +180,7 @@ Random.seed!(100)
             @test vec(sum(γ; dims=1)) ≈ vprobs
 
             # consistency checks
-            I, J, W = findnz(γ)
+            I, J, W = findnz(γ[sortperm(usupport), sortperm(vsupport)])
             @test all(w > zero(w) for w in W)
             @test sum(W) ≈ 1
             @test sort(unique(I)) == 1:m
