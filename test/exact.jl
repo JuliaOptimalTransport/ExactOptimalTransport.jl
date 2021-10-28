@@ -1,7 +1,7 @@
 using ExactOptimalTransport
 
 using Distances
-using PythonOT:PythonOT
+using PythonOT: PythonOT
 using Tulip
 using MathOptInterface
 using Distributions
@@ -75,7 +75,7 @@ Random.seed!(100)
             for x in randn(10)
                 @test γ(x) ≈ invlogcdf(ν, logcdf(μ, x))
             end
-            
+
             # compute OT cost
             c = ot_cost(sqeuclidean, μ, ν)
             @test c ≈ (mean(μ) - mean(ν))^2 + (std(μ) - std(ν))^2
@@ -114,7 +114,7 @@ Random.seed!(100)
             m = 30
             μprobs = normalize!(rand(m), 1)
             μsupport = randn(m)
-        μ = DiscreteNonParametric(μsupport, μprobs)
+            μ = DiscreteNonParametric(μsupport, μprobs)
 
             n = 50
             νprobs = normalize!(rand(n), 1)
@@ -173,7 +173,9 @@ Random.seed!(100)
             vsupport = randn(n)
 
             # compute OT plan
-            γ = @inferred(ot_plan(euclidean, usupport, vsupport, uprobs=uprobs, vprobs=vprobs))
+            γ = @inferred(
+                ot_plan(euclidean, usupport, vsupport; uprobs=uprobs, vprobs=vprobs)
+            )
             @test γ isa SparseMatrixCSC
             @test size(γ) == (m, n)
             @test vec(sum(γ; dims=2)) ≈ uprobs
@@ -188,7 +190,9 @@ Random.seed!(100)
             @test sort(I .+ J) == 2:(m + n)
 
             # compute OT cost
-            c = @inferred(ot_cost(euclidean, usupport, vsupport, uprobs=uprobs, vprobs=vprobs))
+            c = @inferred(
+                ot_cost(euclidean, usupport, vsupport; uprobs=uprobs, vprobs=vprobs)
+            )
 
             # compare with computation with explicit cost matrix
             # DiscreteNonParametric sorts the support automatically, here we have to sort
@@ -209,8 +213,7 @@ Random.seed!(100)
             c2 = @inferred(ot_cost(euclidean, usupport, vsupport; plan=γ))
             @test c2 ≈ c
         end
-
-            end
+    end
 
     @testset "Multivariate Gaussians" begin
         @testset "translation with constant covariance" begin

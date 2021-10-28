@@ -41,29 +41,38 @@ Random.seed!(100)
         m = 10
         n = 15
         usupport = randn(m)
-        uprobs   = normalize!(rand(m), 1)
+        uprobs = normalize!(rand(m), 1)
         vsupport = rand(n)
-        vprobs   = normalize!(rand(n), 1)
+        vprobs = normalize!(rand(n), 1)
 
         for p in (1, 2, 3, randexp()), metric in (Euclidean(), TotalVariation())
             for _p in (p, Val(p))
                 # without additional keyword arguments
-                w = wasserstein(usupport, vsupport; p=_p, metric=metric, uprobs=uprobs, vprobs=vprobs)
-                @test w ≈ ot_cost((x, y) -> metric(x, y)^p, usupport, vsupport, uprobs=uprobs, vprobs=vprobs)^(1 / p)
+                w = wasserstein(
+                    usupport, vsupport; p=_p, metric=metric, uprobs=uprobs, vprobs=vprobs
+                )
+                @test w ≈
+                    ot_cost(
+                    (x, y) -> metric(x, y)^p,
+                    usupport,
+                    vsupport;
+                    uprobs=uprobs,
+                    vprobs=vprobs,
+                )^(1 / p)
 
                 w = wasserstein(usupport, vsupport; p=_p, metric=metric)
                 @test w ≈ ot_cost((x, y) -> metric(x, y)^p, usupport, vsupport)^(1 / p)
 
                 # without passing the probabilities
                 T = ot_plan((x, y) -> metric(x, y)^p, usupport, vsupport)
-                w2 = wasserstein(usupport, vsupport, p=_p, metric=metric, plan=T)
+                w2 = wasserstein(usupport, vsupport; p=_p, metric=metric, plan=T)
                 @test w ≈ w2
             end
         end
 
         # check that `Euclidean` is the default `metric`
         for p in (1, 2, 3, randexp()), _p in (p, Val(p))
-                w = wasserstein(usupport, vsupport; p=_p)
+            w = wasserstein(usupport, vsupport; p=_p)
             @test w ≈ wasserstein(usupport, vsupport; p=_p, metric=Euclidean())
         end
 

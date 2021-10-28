@@ -118,7 +118,7 @@ A pre-computed optimal transport `plan` may be provided.
 """
 function emd2(μ, ν, C, optimizer; plan=nothing)
     γ = if plan === nothing
-    # compute optimal transport plan
+        # compute optimal transport plan
         emd(μ, ν, C, optimizer)
     else
         # check dimensions
@@ -282,7 +282,7 @@ function ot_plan(_, μ::DiscreteNonParametric, ν::DiscreteNonParametric)
     @inbounds for (idx, (i, j, w)) in enumerate(iter)
         I[idx] = i
         J[idx] = j
-W[idx] = w
+        W[idx] = w
     end
     γ = sparse(I, J, W, length(μprobs), length(νprobs))
 
@@ -307,7 +307,6 @@ See also: [`ot_plan`](@ref), [`emd2`](@ref)
 function ot_cost(c, μ::DiscreteNonParametric, ν::DiscreteNonParametric; plan=nothing)
     return _ot_cost(c, μ, ν, plan)
 end
-
 
 """
     ot_cost(
@@ -338,8 +337,8 @@ function ot_cost(
     ;
     uprobs::AbstractVector{<:Real}=fill(inv(length(usupport)), length(usupport)),
     vprobs::AbstractVector{<:Real}=fill(inv(length(vsupport)), length(vsupport)),
-    plan=nothing
-    )
+    plan=nothing,
+)
     μ = discretemeasure(usupport, uprobs)
     ν = discretemeasure(vsupport, vprobs)
     if plan === nothing
@@ -374,11 +373,10 @@ See also: [`ot_plan`](@ref), [`emd2`](@ref)
 function ot_plan(
     c,
     usupport::AbstractVector{<:Real},
-    vsupport::AbstractVector{<:Real}
-    ;
+    vsupport::AbstractVector{<:Real};
     uprobs::AbstractVector{<:Real}=fill(inv(length(usupport)), length(usupport)),
-    vprobs::AbstractVector{<:Real}=fill(inv(length(vsupport)), length(vsupport)))
-
+    vprobs::AbstractVector{<:Real}=fill(inv(length(vsupport)), length(vsupport)),
+)
     μ = discretemeasure(usupport, uprobs)
     ν = discretemeasure(vsupport, vprobs)
     γ = ot_plan(c, μ, ν)
@@ -415,7 +413,7 @@ function _ot_cost(
     νsupport = support(ν)
     cost = sum(w * c(μsupport[i], νsupport[j]) for (i, j, w) in zip(I, J, W))
 
-return cost
+    return cost
 end
 
 # fallback: compute cost matrix (probably often faster to compute cost from scratch)
