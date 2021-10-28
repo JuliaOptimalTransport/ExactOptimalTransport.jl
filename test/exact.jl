@@ -1,7 +1,7 @@
 using ExactOptimalTransport
 
 using Distances
-using PythonOT: PythonOT
+using PythonOT:PythonOT
 using Tulip
 using MathOptInterface
 using Distributions
@@ -112,7 +112,7 @@ Random.seed!(100)
             m = 30
             μprobs = normalize!(rand(m), 1)
             μsupport = randn(m)
-            μ = DiscreteNonParametric(μsupport, μprobs)
+        μ = DiscreteNonParametric(μsupport, μprobs)
 
             n = 50
             νprobs = normalize!(rand(n), 1)
@@ -132,7 +132,7 @@ Random.seed!(100)
             @test sum(W) ≈ 1
             @test sort(unique(I)) == 1:m
             @test sort(unique(J)) == 1:n
-            @test sort(I .+ J) == 2:(m + n)
+            # @test sort(I .+ J) == 2:(m + n)
 
             # compute OT cost
             c = @inferred(ot_cost(euclidean, μ, ν))
@@ -159,6 +159,55 @@ Random.seed!(100)
             c2 = @inferred(ot_cost(euclidean, μ2, ν2; plan=Matrix(γ)))
             @test c2 ≈ c
         end
+
+        @testset "discrete case with vectors" begin
+            # random source and target marginal
+            m = 30
+            uprobs = normalize!(rand(m), 1)
+            usupport = randn(m)
+
+            n = 50
+            vprobs = normalize!(rand(n), 1)
+            vsupport = randn(n)
+
+            # compute OT plan
+            γ = @inferred(ot_plan(euclidean, usupport, vsupport, uprobs=uprobs, vprobs=vprobs))
+            @test γ isa SparseMatrixCSC
+            @test size(γ) == (m, n)
+            @test vec(sum(γ; dims=2)) ≈ uprobs
+            @test vec(sum(γ; dims=1)) ≈ vprobs
+
+            # consistency checks
+            I, J, W = findnz(γ)
+            @test all(w > zero(w) for w in W)
+            @test sum(W) ≈ 1
+            @test sort(unique(I)) == 1:m
+            @test sort(unique(J)) == 1:n
+            @test sort(I .+ J) == 2:(m + n)
+
+            # compute OT cost
+            c = @inferred(ot_cost(euclidean, usupport, vsupport, uprobs=uprobs, vprobs=vprobs))
+
+            # compare with computation with explicit cost matrix
+            # DiscreteNonParametric sorts the support automatically, here we have to sort
+            # manually
+            C = pairwise(Euclidean(), usupport', vsupport'; dims=2)
+            c2 = emd2(uprobs, vprobs, C, Tulip.Optimizer())
+            @test c2 ≈ c rtol = 1e-5
+
+            # do not use the probabilities of u and v check the use of the default
+            c = @inferred(ot_cost(euclidean, usupport, vsupport))
+
+            C = pairwise(Euclidean(), usupport', vsupport'; dims=2)
+            c2 = emd2(fill(1 / m, m), fill(1 / n, n), C, Tulip.Optimizer())
+            @test c2 ≈ c rtol = 1e-5
+
+            γ = @inferred(ot_cost(euclidean, usupport, vsupport))
+            # used
+            c2 = @inferred(ot_cost(euclidean, usupport, vsupport, uprobs=reverse(uprobs), vprobs=reverse(vprobs); plan=γ))
+            @test c2 ≈ c
+        end
+
     end
 
     @testset "Multivariate Gaussians" begin
