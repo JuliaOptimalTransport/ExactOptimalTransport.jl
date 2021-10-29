@@ -1,4 +1,4 @@
-struct FiniteDiscreteMeasure{X<:AbstractVector,P<:AbstractVector}
+struct FiniteDiscreteMeasure{X <: AbstractVector,P <: AbstractVector}
     support::X
     p::P
 
@@ -21,6 +21,39 @@ equal probability is assigned to each entry in the support.
 
 # Examples
 ```julia
+
+μ = discretemeasure(rand(10), normalize!(rand(10),1))
+
+# each entry has equal probability
+ν = discretemeasure(rand(3))
+```
+
+!!! note
+    If `support` is a 1D vector, the constructed measure will be sorted,
+    e.g. for `mu = discretemeasure([3, 1, 2],[0.5, 0.2, 0.3])`, then
+    `mu.support` will be `[1, 2, 3]` and `mu.p` will be `[0.2, 0.3, 0.5]`.
+    Also, avoid passing 1D distributions as something like `[[3],[1],[2]]`
+    since this will be dispatched to the multivariate case instead
+    of the univariate case for which the algorithm is more efficient.
+"""
+function discretemeasure(
+    support::AbstractVector{<:Real},
+    probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
+)
+    return DiscreteNonParametric(support, probs)
+end
+"""
+    discretemeasure(
+        support::AbstractVector,
+        probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
+    )
+
+Construct a finite discrete probability measure with `support` and corresponding
+`probabilities`. If the probability vector argument is not passed, then
+equal probability is assigned to each entry in the support.
+
+# Examples
+```julia
 using KernelFunctions
 # rows correspond to samples
 μ = discretemeasure(RowVecs(rand(7,3)), normalize!(rand(10),1))
@@ -33,13 +66,10 @@ using KernelFunctions
     If `support` is a 1D vector, the constructed measure will be sorted,
     e.g. for `mu = discretemeasure([3, 1, 2],[0.5, 0.2, 0.3])`, then
     `mu.support` will be `[1, 2, 3]` and `mu.p` will be `[0.2, 0.3, 0.5]`.
+    Also, avoid passing 1D distributions as something like `[[3],[1],[2]]`
+    since this will be dispatched to the multivariate case instead
+    of the univariate case for which the algorithm is more efficient.
 """
-function discretemeasure(
-    support::AbstractVector{<:Real},
-    probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
-)
-    return DiscreteNonParametric(support, probs)
-end
 function discretemeasure(
     support::AbstractVector,
     probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
