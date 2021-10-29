@@ -1,4 +1,4 @@
-struct FiniteDiscreteMeasure{X <: AbstractVector,P <: AbstractVector}
+struct FiniteDiscreteMeasure{X<:AbstractVector,P<:AbstractVector}
     support::X
     p::P
 
