@@ -20,7 +20,6 @@ Construct a finite discrete probability measure with `support` and corresponding
 equal probability is assigned to each entry in the support.
 
 # Examples
->>>>>>> 72112ac35523d4f0814f512d7774d9ec6f6f8a7f
 ```julia
 using KernelFunctions
 # rows correspond to samples
