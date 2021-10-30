@@ -31,6 +31,4 @@ squared2wasserstein
 
 ```@docs
 discretemeasure
-discretemeasure(support::AbstractVector,probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),)
-discretemeasure(support::AbstractVector{<:Real},probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),)
 ```
