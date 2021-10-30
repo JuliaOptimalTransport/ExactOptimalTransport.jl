@@ -32,9 +32,9 @@ equal probability is assigned to each entry in the support.
     If `support` is a 1D vector, the constructed measure will be sorted,
     e.g. for `mu = discretemeasure([3, 1, 2],[0.5, 0.2, 0.3])`, then
     `mu.support` will be `[1, 2, 3]` and `mu.p` will be `[0.2, 0.3, 0.5]`.
-    Also, avoid passing 1D distributions as something like `[[3],[1],[2]]`
-    since this will be dispatched to the multivariate case instead
-    of the univariate case for which the algorithm is more efficient.
+
+!!! warning
+    This function and in particular its return values are not stable and might be changed in future releases.
 """
 function discretemeasure(
     support::AbstractVector{<:Real},
