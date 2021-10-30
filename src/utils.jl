@@ -12,22 +12,15 @@ end
 """
     discretemeasure(
         support::AbstractVector,
-        probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support))
+        probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
     )
 
 Construct a finite discrete probability measure with `support` and corresponding
 `probabilities`. If the probability vector argument is not passed, then
 equal probability is assigned to each entry in the support.
 
-# Example with 1D measures
-```julia
-μ = discretemeasure(rand(10), normalize!(rand(10),1))
-
-# each entry has equal probability
-ν = discretemeasure(rand(3))
-```
-
-# Example with multivariate measures
+# Examples
+>>>>>>> 72112ac35523d4f0814f512d7774d9ec6f6f8a7f
 ```julia
 using KernelFunctions
 # rows correspond to samples
