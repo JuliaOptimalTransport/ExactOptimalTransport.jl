@@ -28,3 +28,7 @@ ot_cost(::ExactOptimalTransport.SqEuclidean, ::ExactOptimalTransport.MvNormal, :
 wasserstein
 squared2wasserstein
 ```
+
+```@docs
+discretemeasure
+```
