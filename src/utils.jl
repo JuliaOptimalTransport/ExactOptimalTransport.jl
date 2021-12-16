@@ -12,7 +12,7 @@ end
 """
     discretemeasure(
         support::AbstractVector,
-        probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support))
+        probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
     )
 
 Construct a finite discrete probability measure with `support` and corresponding
@@ -33,6 +33,12 @@ using KernelFunctions
     If `support` is a 1D vector, the constructed measure will be sorted,
     e.g. for `mu = discretemeasure([3, 1, 2],[0.5, 0.2, 0.3])`, then
     `mu.support` will be `[1, 2, 3]` and `mu.p` will be `[0.2, 0.3, 0.5]`.
+    Also, avoid passing 1D distributions as `RowVecs(rand(3))` or `[[1],[3],[4]]`,
+    since this will be dispatched to the multivariate case instead
+    of the univariate case for which the algorithm is more efficient.
+
+!!! warning
+    This function and in particular its return values are not stable and might be changed in future releases.
 """
 function discretemeasure(
     support::AbstractVector{<:Real},

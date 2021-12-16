@@ -12,6 +12,7 @@ using SparseArrays
 
 export emd, emd2
 export ot_cost, ot_plan, wasserstein, squared2wasserstein
+export discretemeasure
 
 const MOI = MathOptInterface
 
