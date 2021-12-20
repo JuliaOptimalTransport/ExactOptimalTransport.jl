@@ -305,45 +305,50 @@ A pre-computed optimal transport `plan` may be provided.
 See also: [`ot_plan`](@ref), [`emd2`](@ref)
 """
 function ot_cost(c, μ::DiscreteNonParametric, ν::DiscreteNonParametric; plan=nothing)
-    return _ot_cost(c, μ, ν, plan)
-end
-
-# compute cost from scratch if no plan is provided
-function _ot_cost(c, μ::DiscreteNonParametric, ν::DiscreteNonParametric, ::Nothing)
-    # unpack the probabilities of the two distributions
+    # extract support and probabilities of discrete distributions
+    # note: support of `DiscreteNonParametric` is sorted
+    μsupport = support(μ)
+    νsupport = support(ν)
     μprobs = probs(μ)
     νprobs = probs(ν)
 
+    return if μprobs isa FillArrays.AbstractFill &&
+        νprobs isa FillArrays.AbstractFill &&
+        length(μprobs) == length(νprobs)
+        # Special case: discrete uniform distributions of the same "size"
+        # In this case we always just compute `sum(c.(μsupport .- νsupport))` and scale it
+        # We use pairwise summation and avoid allocations
+        # (https://github.com/JuliaLang/julia/pull/31020)
+        T = Base.promote_eltype(μprobs, νprobs)
+        T(first(μprobs)) *
+        sum(Broadcast.instantiate(Broadcast.broadcasted(c, μsupport, νsupport)))
+    else
+        # generic case 
+        _ot_cost(c, μsupport, μprobs, νsupport, νprobs, plan)
+    end
+end
+
+# compute cost from scratch if no plan is provided
+function _ot_cost(c, μsupport, μprobs, νsupport, νprobs, ::Nothing)
     # create the iterator
-    # note: support of `DiscreteNonParametric` is sorted
     iter = Discrete1DOTIterator(μprobs, νprobs)
 
     # compute the cost
-    μsupport = support(μ)
-    νsupport = support(ν)
-    cost = sum(w * c(μsupport[i], νsupport[j]) for (i, j, w) in iter)
-
-    return cost
+    return sum(w * c(μsupport[i], νsupport[j]) for (i, j, w) in iter)
 end
 
 # if a sparse plan is provided, we just iterate through the non-zero entries
-function _ot_cost(
-    c, μ::DiscreteNonParametric, ν::DiscreteNonParametric, plan::SparseMatrixCSC
-)
+function _ot_cost(c, μsupport, _, νsupport, _, plan::SparseMatrixCSC)
     # extract non-zero flows
     I, J, W = findnz(plan)
 
     # compute the cost
-    μsupport = support(μ)
-    νsupport = support(ν)
-    cost = sum(w * c(μsupport[i], νsupport[j]) for (i, j, w) in zip(I, J, W))
-
-    return cost
+    return sum(w * c(μsupport[i], νsupport[j]) for (i, j, w) in zip(I, J, W))
 end
 
 # fallback: compute cost matrix (probably often faster to compute cost from scratch)
-function _ot_cost(c, μ::DiscreteNonParametric, ν::DiscreteNonParametric, plan)
-    return dot(plan, StatsBase.pairwise(c, support(μ), support(ν)))
+function _ot_cost(c, μsupport, _, νsupport, _, plan)
+    return dot(plan, StatsBase.pairwise(c, μsupport, νsupport))
 end
 
 ################

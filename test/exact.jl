@@ -1,6 +1,7 @@
 using ExactOptimalTransport
 
 using Distances
+using FillArrays
 using PythonOT: PythonOT
 using Tulip
 using MathOptInterface
@@ -110,56 +111,71 @@ Random.seed!(100)
         end
 
         @testset "discrete case" begin
-            # random source and target marginal
-            m = 30
-            μprobs = normalize!(rand(m), 1)
-            μsupport = randn(m)
-            μ = DiscreteNonParametric(μsupport, μprobs)
+            # different random sources and target marginals:
+            # non-uniform + different size, uniform + different size, uniform + equal size
+            for (μ, ν) in (
+                (
+                    DiscreteNonParametric(randn(30), normalize!(rand(30), 1)),
+                    DiscreteNonParametric(randn(50), normalize!(rand(50), 1)),
+                ),
+                (
+                    DiscreteNonParametric(randn(30), Fill(1 / 30, 30)),
+                    DiscreteNonParametric(randn(50), Fill(1 / 50, 50)),
+                ),
+                (
+                    DiscreteNonParametric(randn(30), Fill(1 / 30, 30)),
+                    DiscreteNonParametric(randn(30), Fill(1 / 30, 30)),
+                ),
+            )
+                # extract support, probabilities, and "size"
+                μsupport = support(μ)
+                μprobs = probs(μ)
+                m = length(μprobs)
 
-            n = 50
-            νprobs = normalize!(rand(n), 1)
-            νsupport = randn(n)
-            ν = DiscreteNonParametric(νsupport, νprobs)
+                νsupport = support(ν)
+                νprobs = probs(ν)
+		n = length(νprobs)
 
-            # compute OT plan
-            γ = @inferred(ot_plan(euclidean, μ, ν))
-            @test γ isa SparseMatrixCSC
-            @test size(γ) == (m, n)
-            @test vec(sum(γ; dims=2)) ≈ μ.p
-            @test vec(sum(γ; dims=1)) ≈ ν.p
+                # compute OT plan
+                γ = @inferred(ot_plan(euclidean, μ, ν))
+                @test γ isa SparseMatrixCSC
+                @test size(γ) == (m, n)
+                @test vec(sum(γ; dims=2)) ≈ μ.p
+                @test vec(sum(γ; dims=1)) ≈ ν.p
 
-            # consistency checks
-            I, J, W = findnz(γ)
-            @test all(w > zero(w) for w in W)
-            @test sum(W) ≈ 1
-            @test sort(unique(I)) == 1:m
-            @test sort(unique(J)) == 1:n
-            @test sort(I .+ J) == 2:(m + n)
+                # consistency checks
+                I, J, W = findnz(γ)
+                @test all(w > zero(w) for w in W)
+                @test sum(W) ≈ 1
+                @test sort(unique(I)) == 1:m
+                @test sort(unique(J)) == 1:n
+                @test sort(I .+ J) == 2:(m + n)
 
-            # compute OT cost
-            c = @inferred(ot_cost(euclidean, μ, ν))
+                # compute OT cost
+                c = @inferred(ot_cost(euclidean, μ, ν))
 
-            # compare with computation with explicit cost matrix
-            # DiscreteNonParametric sorts the support automatically, here we have to sort
-            # manually
-            C = pairwise(Euclidean(), μsupport', νsupport'; dims=2)
-            c2 = emd2(μprobs, νprobs, C, Tulip.Optimizer())
-            @test c2 ≈ c rtol = 1e-5
+                # compare with computation with explicit cost matrix
+                # DiscreteNonParametric sorts the support automatically, here we have to sort
+                # manually
+                C = pairwise(Euclidean(), μsupport', νsupport'; dims=2)
+                c2 = emd2(μprobs, νprobs, C, Tulip.Optimizer())
+                @test c2 ≈ c rtol = 1e-5
 
-            # compare with POT
-            # disabled currently since https://github.com/PythonOT/POT/issues/169 causes bounds
-            # error
-            # @test γ ≈ POT.emd_1d(μ.support, ν.support; a=μ.p, b=μ.p, metric="euclidean")
-            # @test c ≈ POT.emd2_1d(μ.support, ν.support; a=μ.p, b=μ.p, metric="euclidean")
+                # compare with POT
+                # disabled currently since https://github.com/PythonOT/POT/issues/169 causes bounds
+                # error
+                # @test γ ≈ POT.emd_1d(μ.support, ν.support; a=μ.p, b=μ.p, metric="euclidean")
+                # @test c ≈ POT.emd2_1d(μ.support, ν.support; a=μ.p, b=μ.p, metric="euclidean")
 
-            # do not use the probabilities of μ and ν to ensure that the provided plan is
-            # used
-            μ2 = DiscreteNonParametric(μsupport, reverse(μprobs))
-            ν2 = DiscreteNonParametric(νsupport, reverse(νprobs))
-            c2 = @inferred(ot_cost(euclidean, μ2, ν2; plan=γ))
-            @test c2 ≈ c
-            c2 = @inferred(ot_cost(euclidean, μ2, ν2; plan=Matrix(γ)))
-            @test c2 ≈ c
+                # do not use the probabilities of μ and ν to ensure that the provided plan is
+                # used
+                μ2 = DiscreteNonParametric(μsupport, reverse(μprobs))
+                ν2 = DiscreteNonParametric(νsupport, reverse(νprobs))
+                c2 = @inferred(ot_cost(euclidean, μ2, ν2; plan=γ))
+                @test c2 ≈ c
+                c2 = @inferred(ot_cost(euclidean, μ2, ν2; plan=Matrix(γ)))
+                @test c2 ≈ c
+            end
         end
     end
 

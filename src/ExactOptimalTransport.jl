@@ -3,6 +3,7 @@ module ExactOptimalTransport
 using Distances
 using MathOptInterface
 using Distributions
+using FillArrays
 using PDMats
 using QuadGK
 using StatsBase: StatsBase
