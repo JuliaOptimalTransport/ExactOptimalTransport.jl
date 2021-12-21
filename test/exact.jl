@@ -134,7 +134,7 @@ Random.seed!(100)
 
                 νsupport = support(ν)
                 νprobs = probs(ν)
-		n = length(νprobs)
+                n = length(νprobs)
 
                 # compute OT plan
                 γ = @inferred(ot_plan(euclidean, μ, ν))
