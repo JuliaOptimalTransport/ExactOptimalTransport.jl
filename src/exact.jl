@@ -71,7 +71,7 @@ function emd(μ, ν, C, model::MOI.ModelLike)
 
     # add non-negativity constraints
     for xi in x
-        MOI.add_constraint(model, MOI.SingleVariable(xi), MOI.GreaterThan(zero_T))
+        MOI.add_constraint(model, xi, MOI.GreaterThan(zero_T))
     end
 
     # add constraints for source
