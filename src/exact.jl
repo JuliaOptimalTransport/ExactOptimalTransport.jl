@@ -263,30 +263,38 @@ a sparse matrix.
 See also: [`ot_cost`](@ref), [`emd`](@ref)
 """
 function ot_plan(_, μ::DiscreteNonParametric, ν::DiscreteNonParametric)
-    # unpack the probabilities of the two distributions
+    # Unpack the probabilities of the two distributions
+    # Note: support of `DiscreteNonParametric` is sorted
     μprobs = probs(μ)
     νprobs = probs(ν)
+    T = Base.promote_eltype(μprobs, νprobs)
 
-    # create the iterator
-    # note: support of `DiscreteNonParametric` is sorted
-    iter = Discrete1DOTIterator(μprobs, νprobs)
+    return if μprobs isa FillArrays.AbstractFill &&
+        νprobs isa FillArrays.AbstractFill &&
+        length(μprobs) == length(νprobs)
+        # Special case: discrete uniform distributions of the same "size"
+        k = length(μprobs)
+        sparse(1:k, 1:k, T(first(μprobs)), k, k)
+    else
+        # Generic case
+        # Create the iterator
+        iter = Discrete1DOTIterator(μprobs, νprobs)
 
-    # create arrays for the indices of the two histograms and the optimal flow between the
-    # corresponding points
-    n = length(iter)
-    I = Vector{Int}(undef, n)
-    J = Vector{Int}(undef, n)
-    W = Vector{Base.promote_eltype(μprobs, νprobs)}(undef, n)
+        # create arrays for the indices of the two histograms and the optimal flow between the
+        # corresponding points
+        n = length(iter)
+        I = Vector{Int}(undef, n)
+        J = Vector{Int}(undef, n)
+        W = Vector{T}(undef, n)
 
-    # compute the sparse optimal transport plan
-    @inbounds for (idx, (i, j, w)) in enumerate(iter)
-        I[idx] = i
-        J[idx] = j
-        W[idx] = w
+        # compute the sparse optimal transport plan
+        @inbounds for (idx, (i, j, w)) in enumerate(iter)
+            I[idx] = i
+            J[idx] = j
+            W[idx] = w
+        end
+        sparse(I, J, W, length(μprobs), length(νprobs))
     end
-    γ = sparse(I, J, W, length(μprobs), length(νprobs))
-
-    return γ
 end
 
 """
@@ -305,8 +313,8 @@ A pre-computed optimal transport `plan` may be provided.
 See also: [`ot_plan`](@ref), [`emd2`](@ref)
 """
 function ot_cost(c, μ::DiscreteNonParametric, ν::DiscreteNonParametric; plan=nothing)
-    # extract support and probabilities of discrete distributions
-    # note: support of `DiscreteNonParametric` is sorted
+    # Extract support and probabilities of discrete distributions
+    # Note: support of `DiscreteNonParametric` is sorted
     μsupport = support(μ)
     νsupport = support(ν)
     μprobs = probs(μ)
@@ -323,7 +331,7 @@ function ot_cost(c, μ::DiscreteNonParametric, ν::DiscreteNonParametric; plan=n
         T(first(μprobs)) *
         sum(Broadcast.instantiate(Broadcast.broadcasted(c, μsupport, νsupport)))
     else
-        # generic case 
+        # Generic case 
         _ot_cost(c, μsupport, μprobs, νsupport, νprobs, plan)
     end
 end
