@@ -23,8 +23,6 @@ jobs:
         with:
           python-version: '3.9'
           architecture: ${{ matrix.arch }}
-      # Limitation of pip: https://pythonot.github.io/index.html#pip-installation
-      - run: python -m pip install cython numpy
       - run: python -m pip install pot
       - uses: julia-actions/setup-julia@latest
         with:
