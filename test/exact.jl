@@ -149,7 +149,13 @@ Random.seed!(100)
                 @test sum(W) ≈ 1
                 @test sort(unique(I)) == 1:m
                 @test sort(unique(J)) == 1:n
-                @test sort(I .+ J) == 2:(m + n)
+                @test sort(I .+ J) == if μprobs isa Fill && νprobs isa Fill && m == n
+                    # Optimized version for special case (discrete uniform + equal size)
+                    2:2:(m + n)
+                else
+                    # Generic case (not optimized)
+                    2:(m + n)
+                end
 
                 # compute OT cost
                 c = @inferred(ot_cost(euclidean, μ, ν))
