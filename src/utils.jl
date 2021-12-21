@@ -12,7 +12,7 @@ end
 """
     discretemeasure(
         support::AbstractVector,
-        probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
+        probs::AbstractVector{<:Real}=FillArrays.Fill(inv(length(support)), length(support)),
     )
 
 Construct a finite discrete probability measure with `support` and corresponding
@@ -42,13 +42,13 @@ using KernelFunctions
 """
 function discretemeasure(
     support::AbstractVector{<:Real},
-    probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
+    probs::AbstractVector{<:Real}=Fill(inv(length(support)), length(support)),
 )
     return DiscreteNonParametric(support, probs)
 end
 function discretemeasure(
     support::AbstractVector,
-    probs::AbstractVector{<:Real}=fill(inv(length(support)), length(support)),
+    probs::AbstractVector{<:Real}=Fill(inv(length(support)), length(support)),
 )
     return FiniteDiscreteMeasure{typeof(support),typeof(probs)}(support, probs)
 end
